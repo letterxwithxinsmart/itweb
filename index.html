@@ -146,6 +146,36 @@
       border-color: #38bdf8;
     }
 
+    /* Password container with eye toggle */
+    .password-container {
+      position: relative;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .password-container input {
+      width: 100%;
+      margin: 0;
+      padding-right: 45px;
+    }
+
+    .eye-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #94a3b8;
+      padding: 4px;
+    }
+
+    .eye-btn:hover {
+      color: #38bdf8;
+    }
+
     /* Page 2: Raw data style */
     .raw-data-card {
       background: #0f172a;
@@ -351,7 +381,10 @@
       <div class="message-box">
         <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng và nghe tiếp tục bài thuyết trình nha 🐾</p>
       </div>
-      <input type="password" id="p3-pass" placeholder="Nhập Mật Khẩu">
+      <div class="password-container">
+        <input type="password" id="p3-pass" placeholder="Nhập Mật Khẩu">
+        <button type="button" class="eye-btn" onclick="togglePassword('p3-pass', this)">👁️‍🗨️</button>
+      </div>
       <button class="btn" onclick="checkPass(3, '1111', 4)">Xác nhận</button>
       <div id="p3-feedback" class="feedback-msg" style="color: #f43f5e;"></div>
     </div>
@@ -419,7 +452,10 @@
       <div class="message-box">
         <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng và nghe tiếp tục bài thuyết trình nha 🐾</p>
       </div>
-      <input type="password" id="p7-pass" placeholder="Nhập Mật Khẩu">
+      <div class="password-container">
+        <input type="password" id="p7-pass" placeholder="Nhập Mật Khẩu">
+        <button type="button" class="eye-btn" onclick="togglePassword('p7-pass', this)">👁️‍🗨️</button>
+      </div>
       <button class="btn" onclick="checkPass(7, '1121', 8)">Xác nhận</button>
       <div id="p7-feedback" class="feedback-msg" style="color: #f43f5e;"></div>
     </div>
@@ -475,7 +511,10 @@
       <div class="message-box">
         <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng nào bạn và trả lời các câu hỏi 🧠</p>
       </div>
-      <input type="password" id="p10-pass" placeholder="Nhập Mật Khẩu">
+      <div class="password-container">
+        <input type="password" id="p10-pass" placeholder="Nhập Mật Khẩu">
+        <button type="button" class="eye-btn" onclick="togglePassword('p10-pass', this)">👁️‍🗨️</button>
+      </div>
       <button class="btn" onclick="checkPass(10, 'Supercalifragilisticexpialidocious', 11)">Xác nhận</button>
       <div id="p10-feedback" class="feedback-msg" style="color: #f43f5e;"></div>
     </div>
@@ -484,12 +523,12 @@
   <!-- PAGE 11 -->
   <div class="page" id="page-11">
     <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
-      <h1 class="celebrate-title">🎉 HOÀN THÀNH 🎉</h1>
+      <h1 class="celebrate-title">🏮🎉 HOÀN THÀNH BÀI HỌC RỒII 🎉🏮</h1>
       <div class="message-box" style="border-color: #f43f5e; margin-top: 20px;">
-        <p style="font-size: 1.2rem; font-weight: bold; color: #4ade80;">Chúc mừng bạn đã hoàn thành khóa học!</p>
+        <p style="font-size: 1.2rem; font-weight: bold; color: #f74aa9;">Chúc mừng bạn đã hoàn thành khóa học tăng độ nhăn của não!</p>
         <p style="font-size: 1.1rem; color: #facc15; margin-top: 10px;">✨ BẠN ĐÃ ĐƯỢC NÂNG LEVEL ✨</p>
         <hr style="border-color: #334155; margin: 12px 0;">
-        <p style="font-size: 0.95rem; color: #cbd5e1;">Cảm ơn bạn đã chú ý lắng nghe bài thuyết trình!</p>
+        <p style="font-size: 0.95rem; font-weight: bold; color: #f0d590;">Cảm ơn thầy và các bạn đã chú ý lắng nghe bài thuyết trình của nhóm em ạ!</p>
       </div>
       <button class="btn" onclick="startConfetti()" style="background: linear-gradient(135deg, #e11d48, #9333ea); margin-top: 15px;">🎆 Bắn pháo hoa ăn mừng 🎆</button>
     </div>
@@ -506,6 +545,18 @@
 
     if(pageNumber === 11) {
       startConfetti();
+    }
+  }
+
+  // Toggle Password Visibility
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === "password") {
+      input.type = "text";
+      btn.innerText = "👁️";
+    } else {
+      input.type = "password";
+      btn.innerText = "👁️‍🗨️";
     }
   }
 
