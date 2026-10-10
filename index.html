@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bài 11: Cơ sở dữ liệu - Interactive Web</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      padding: 12px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 450px;
+      min-height: 90vh;
+      background: rgba(30, 41, 59, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      border: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 16px;
+      min-height: 90vh;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .page.active {
+      display: flex;
+    }
+
+    /* Background images overlay */
+    .bg-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.25;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .content-box {
+      width: 100%;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 15px;
+      color: #38bdf8;
+      line-height: 1.4;
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+      margin-bottom: 12px;
+    }
+
+    .message-box {
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid #38bdf8;
+      border-radius: 16px;
+      padding: 16px;
+      width: 100%;
+      margin: 15px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.4);
+      transition: all 0.2s ease;
+      width: 100%;
+      max-width: 280px;
+      margin-top: 10px;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-next-corner {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      width: auto;
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      z-index: 10;
+    }
+
+    .btn-back-corner {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      width: auto;
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      background: #475569;
+      z-index: 10;
+    }
+
+    /* Inputs */
+    input[type="text"], input[type="password"], input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #fff;
+      font-size: 1rem;
+      text-align: center;
+      margin: 10px 0;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #38bdf8;
+    }
+
+    /* Page 2: Raw data style */
+    .raw-data-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #38bdf8;
+      border-radius: 12px;
+      padding: 12px;
+      width: 100%;
+      text-align: left;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .raw-data-card h3 {
+      color: #f43f5e;
+      margin-bottom: 6px;
+    }
+
+    .table-scroll {
+      width: 100%;
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      border: 1px solid #334155;
+      padding: 6px 4px;
+      text-align: center;
+    }
+
+    th {
+      background: #1e293b;
+      color: #38bdf8;
+      position: sticky;
+      top: 0;
+    }
+
+    td input {
+      padding: 4px;
+      margin: 0;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    /* Quiz choices */
+    .quiz-options {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .quiz-btn {
+      background: #1e293b;
+      border: 2px solid #334155;
+      color: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-btn.wrong {
+      background: #991b1b !important;
+      border-color: #f87171 !important;
+      color: white;
+    }
+
+    /* Page 6 Interactive Line Connect */
+    .drag-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .drag-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 48%;
+    }
+
+    .drag-item, .drop-target {
+      padding: 12px 8px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-align: center;
+      border: 2px solid #475569;
+      background: #1e293b;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drag-item {
+      cursor: pointer;
+      background: #0284c7;
+      border-color: #38bdf8;
+    }
+
+    .drag-item.matched {
+      background: #15803d !important;
+      border-color: #4ade80 !important;
+      color: #fff;
+    }
+
+    .feedback-msg {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      min-height: 24px;
+    }
+
+    /* Page 11 Celebration */
+    .celebrate-title {
+      font-size: 1.8rem;
+      color: #f43f5e;
+      text-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- PAGE 1 -->
+  <div class="page active" id="page-1">
+    <img src="https://images2.imgbox.com/f9/57/O3C54Sg9_o.jpg" class="bg-img" alt="Dog background">
+    <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
+      <div class="message-box">
+        <h2 style="color: #f43f5e; font-size: 1.4rem;">⚠️ WARNING ⚠️</h2>
+        <p style="font-size: 1.1rem; font-weight: bold;">"Your phone has been hacked, please go back to the main page."</p>
+      </div>
+      <button class="btn" onclick="nextPage(2)" style="margin-top: 20px;">➡️ Return to Main Page</button>
+    </div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="page" id="page-2">
+    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
+    <div class="content-box">
+      <h2>BẢNG ĐIỂM DƯ THỪA DỮ LIỆU</h2>
+      
+      <!-- Raw Data Section -->
+      <div class="raw-data-card">
+        <h3>📌 Dữ liệu thô (Học sinh: Beyoncé)</h3>
+        <p>• <b>Toán:</b> 8.0, 8.5, 9.0, 9.5</p>
+        <p>• <b>Văn:</b> 7.5, 8.0, 8.0, 8.5</p>
+        <p>• <b>Anh:</b> 9.0, 9.5, 10, 9.8</p>
+        <p>• <b>Lý:</b> 8.0, 8.0, 8.5, 9.0 | • <b>Hóa:</b> 7.0, 7.5, 8.0, 8.5</p>
+        <p>• <b>Sinh:</b> 8.5, 8.5, 9.0, 9.0 | • <b>Sử:</b> 9.0, 9.0, 9.5, 9.5</p>
+        <p>• <b>Địa:</b> 8.0, 8.5, 8.5, 9.0</p>
+      </div>
+
+      <p style="font-size: 0.85rem; color: #cbd5e1;">Nhập dữ liệu tên & điểm vào bảng bên dưới:</p>
+      
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Môn</th>
+              <th>Họ Tên</th>
+              <th>TX1</th>
+              <th>TX2</th>
+              <th>GK</th>
+              <th>CK</th>
+            </tr>
+          </thead>
+          <tbody id="p2-table-body">
+            <!-- Generated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <button class="btn" onclick="checkPage2()">Kiểm tra</button>
+      <div id="p2-feedback" class="feedback-msg"></div>
+    </div>
+    <button class="btn btn-next-corner" id="p2-next" style="display:none;" onclick="nextPage(3)">Tiếp ➡️</button>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="page" id="page-3">
+    <img src="https://images2.imgbox.com/39/29/Jq0c6zX7_o.jpg" class="bg-img" alt="Thinking Cat background">
+    <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
+      <div class="message-box">
+        <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng và nghe tiếp tục bài thuyết trình nha 🐾</p>
+      </div>
+      <input type="password" id="p3-pass" placeholder="Nhập Mật Khẩu">
+      <button class="btn" onclick="checkPass(3, '1111', 4)">Xác nhận</button>
+      <div id="p3-feedback" class="feedback-msg" style="color: #f43f5e;"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 4 -->
+  <div class="page" id="page-4">
+    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
+    <div class="content-box">
+      <h2>CÂU HỎI 1</h2>
+      <div class="message-box">
+        <p style="font-weight: bold;">Trong danh sách lớp học, nội dung được sắp xếp theo thứ tự nào?</p>
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answerQuiz(this, true, 5)">A. Lớp, STT, Tên</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">B. Tên, STT, Lớp</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">C. STT, Tên, Lớp</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">D. Không cái nào đúng cả</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 5 -->
+  <div class="page" id="page-5">
+    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
+    <div class="content-box">
+      <h2>CÂU HỎI 2</h2>
+      <div class="message-box">
+        <p style="font-weight: bold;">Trong bảng điểm môn học, nội dung được sắp xếp theo thứ tự nào?</p>
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">A. Tên, Điểm, STT, Lớp</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">B. Điểm, STT, Lớp, Tên</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">C. Lớp, STT, Tên, Điểm</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, true, 6)">D. STT, Lớp, Tên, Điểm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 6 -->
+  <div class="page" id="page-6">
+    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
+    <div class="content-box">
+      <h2>TƯƠNG TÁC KẾT NỐI</h2>
+      <p style="font-size: 0.85rem;">Bấm chọn ô bên TẢI rồi bấm ô tương ứng bên PHẢI:</p>
+      
+      <div class="drag-container">
+        <div class="drag-col">
+          <div class="drag-item" id="p6-src1" onclick="selectItem('src1')">Danh sách lớp học</div>
+          <div class="drag-item" id="p6-src2" style="display:none;" onclick="selectItem('src2')">Danh sách lớp học (Lần 2)</div>
+          <div class="drag-item" id="p6-src3" style="display:none;" onclick="selectItem('src3')">Bảng điểm môn học</div>
+        </div>
+        <div class="drag-col">
+          <div class="drop-target" id="p6-target1" onclick="matchItem('target1')">Danh sách lớp</div>
+          <div class="drop-target" id="p6-target2" onclick="matchItem('target2')">Điểm môn học</div>
+          <div class="drop-target" id="p6-target3" onclick="matchItem('target3')">Lập bảng điểm</div>
+        </div>
+      </div>
+
+      <div id="p6-feedback" class="feedback-msg"></div>
+    </div>
+    <button class="btn btn-next-corner" id="p6-next" style="display:none;" onclick="nextPage(7)">Tiếp ➡️</button>
+  </div>
+
+  <!-- PAGE 7 -->
+  <div class="page" id="page-7">
+    <img src="https://images2.imgbox.com/39/29/Jq0c6zX7_o.jpg" class="bg-img" alt="Thinking Cat background">
+    <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
+      <div class="message-box">
+        <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng và nghe tiếp tục bài thuyết trình nha 🐾</p>
+      </div>
+      <input type="password" id="p7-pass" placeholder="Nhập Mật Khẩu">
+      <button class="btn" onclick="checkPass(7, '1121', 8)">Xác nhận</button>
+      <div id="p7-feedback" class="feedback-msg" style="color: #f43f5e;"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 8 -->
+  <div class="page" id="page-8">
+    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
+    <div class="content-box">
+      <h2>CÂU HỎI 3</h2>
+      <div class="message-box">
+        <p style="font-weight: bold;">Thuộc tính nào sau đây KHÔNG PHẢI là thuộc tính cơ bản của CSDL?</p>
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">A. Tính không dư thừa</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">B. Tính nhất quán</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, false)">C. Tính bảo mật và an toàn</button>
+        <button class="quiz-btn" onclick="answerQuiz(this, true, 9)">D. Tính hoàn chỉnh</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 9 -->
+  <div class="page" id="page-9">
+    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
+    <div class="content-box">
+      <h2>PHÂN QUYỀN TRUY CẬP</h2>
+      <p style="font-size: 0.9rem;">Vui lòng chọn vai trò để đăng nhập:</p>
+
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+        <button class="btn" onclick="loginRole('hocsinh')" style="background: #0284c7;">👨‍🎓 Đăng nhập vai trò Học sinh</button>
+        <button class="btn" onclick="loginRole('giaovien')" style="background: #7c3aed;">👩‍🏫 Đăng nhập vai trò Giáo viên</button>
+      </div>
+
+      <!-- Action Panel -->
+      <div id="p9-action-panel" style="display:none; margin-top: 25px; width: 100%;">
+        <div class="message-box">
+          <p id="p9-role-title" style="font-weight: bold; color: #38bdf8;"></p>
+        </div>
+        <button class="btn" id="p9-edit-btn" onclick="tryEditGrade()" style="background: #e11d48;">✏️ Sửa điểm thi</button>
+        <button class="btn" onclick="resetRole()" style="background: #475569; margin-top: 10px;">🔙 Đổi vai trò</button>
+      </div>
+
+      <div id="p9-feedback" class="feedback-msg" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- Navigation buttons -->
+    <button class="btn btn-back-corner" onclick="nextPage(8)">⬅️ Quay lại</button>
+    <button class="btn btn-next-corner" onclick="nextPage(10)">Tiếp ➡️</button>
+  </div>
+
+  <!-- PAGE 10 -->
+  <div class="page" id="page-10">
+    <img src="https://images2.imgbox.com/39/29/Jq0c6zX7_o.jpg" class="bg-img" alt="Thinking Cat background">
+    <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
+      <div class="message-box">
+        <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng nào bạn và trả lời các câu hỏi 🧠</p>
+      </div>
+      <input type="password" id="p10-pass" placeholder="Nhập Mật Khẩu">
+      <button class="btn" onclick="checkPass(10, 'Supercalifragilisticexpialidocious', 11)">Xác nhận</button>
+      <div id="p10-feedback" class="feedback-msg" style="color: #f43f5e;"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 11 -->
+  <div class="page" id="page-11">
+    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
+    <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
+      <h1 class="celebrate-title">🎉 HOÀN THÀNH 🎉</h1>
+      <div class="message-box" style="border-color: #f43f5e; margin-top: 20px;">
+        <p style="font-size: 1.2rem; font-weight: bold; color: #4ade80;">Chúc mừng bạn đã hoàn thành khóa học!</p>
+        <p style="font-size: 1.1rem; color: #facc15; margin-top: 10px;">✨ BẠN ĐÃ ĐƯỢC NÂNG LEVEL ✨</p>
+        <hr style="border-color: #334155; margin: 12px 0;">
+        <p style="font-size: 0.95rem; color: #cbd5e1;">Cảm ơn bạn đã chú ý lắng nghe bài thuyết trình!</p>
+      </div>
+      <button class="btn" onclick="startConfetti()" style="background: linear-gradient(135deg, #e11d48, #9333ea); margin-top: 15px;">🎆 Bắn pháo hoa ăn mừng 🎆</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Page Navigation
+  function nextPage(pageNumber) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + pageNumber);
+    if(target) target.classList.add('active');
+
+    if(pageNumber === 11) {
+      startConfetti();
+    }
+  }
+
+  // --- Page 2 Logic ---
+  const subjects = ['Toán', 'Văn', 'Anh', 'Lý', 'Hóa', 'Sinh', 'Sử', 'Địa'];
+  const correctRaw = {
+    'Toán': [8, 8.5, 9, 9.5],
+    'Văn': [7.5, 8, 8, 8.5],
+    'Anh': [9, 9.5, 10, 9.8],
+    'Lý': [8, 8, 8.5, 9],
+    'Hóa': [7, 7.5, 8, 8.5],
+    'Sinh': [8.5, 8.5, 9, 9],
+    'Sử': [9, 9, 9.5, 9.5],
+    'Địa': [8, 8.5, 8.5, 9]
+  };
+
+  function initPage2Table() {
+    const tbody = document.getElementById('p2-table-body');
+    tbody.innerHTML = '';
+    subjects.forEach((sub, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight:bold; color:#38bdf8;">${sub}</td>
+        <td><input type="text" id="p2-name-${idx}" placeholder="Tên"></td>
+        <td><input type="number" step="0.1" id="p2-d1-${idx}"></td>
+        <td><input type="number" step="0.1" id="p2-d2-${idx}"></td>
+        <td><input type="number" step="0.1" id="p2-gk-${idx}"></td>
+        <td><input type="number" step="0.1" id="p2-ck-${idx}"></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+  initPage2Table();
+
+  function checkPage2() {
+    let isCorrect = true;
+    subjects.forEach((sub, idx) => {
+      const name = document.getElementById(`p2-name-${idx}`).value.trim().toLowerCase();
+      const d1 = parseFloat(document.getElementById(`p2-d1-${idx}`).value);
+      const d2 = parseFloat(document.getElementById(`p2-d2-${idx}`).value);
+      const gk = parseFloat(document.getElementById(`p2-gk-${idx}`).value);
+      const ck = parseFloat(document.getElementById(`p2-ck-${idx}`).value);
+
+      const target = correctRaw[sub];
+      if (name !== 'beyoncé' && name !== 'beyonce') isCorrect = false;
+      if (d1 !== target[0] || d2 !== target[1] || gk !== target[2] || ck !== target[3]) isCorrect = false;
+    });
+
+    const feedback = document.getElementById('p2-feedback');
+    const nextBtn = document.getElementById('p2-next');
+    if (isCorrect) {
+      feedback.style.color = '#4ade80';
+      feedback.innerText = "Hay nha hay nha, chúc mừng cậu đã nhập đúng hết dữ liệu và không bị nhầm! 🎉";
+      nextBtn.style.display = 'block';
+    } else {
+      feedback.style.color = '#f43f5e';
+      feedback.innerText = "Lêu lêu, bạn là nạn nhân của dư thừa trong dữ liệu 😜";
+      nextBtn.style.display = 'none';
+    }
+  }
+
+  // --- Password Logic (Pages 3, 7, 10) ---
+  function checkPass(pageNum, correctPass, targetPage) {
+    const input = document.getElementById(`p${pageNum}-pass`).value;
+    const feedback = document.getElementById(`p${pageNum}-feedback`);
+    if (input === correctPass) {
+      feedback.innerText = "";
+      nextPage(targetPage);
+    } else {
+      feedback.innerText = "Mật khẩu chưa đúng rồi, thử lại nhé!";
+    }
+  }
+
+  // --- Quiz Logic (Pages 4, 5, 8) ---
+  function answerQuiz(btn, isCorrect, nextPageNum) {
+    if (isCorrect) {
+      btn.style.background = '#15803d';
+      btn.style.borderColor = '#4ade80';
+      setTimeout(() => nextPage(nextPageNum), 500);
+    } else {
+      btn.classList.add('wrong');
+    }
+  }
+
+  // --- Page 6 Drag & Connect Logic ---
+  let selectedSrc = null;
+  let p6Step = 1;
+
+  function selectItem(srcId) {
+    selectedSrc = srcId;
+    document.querySelectorAll('.drag-item').forEach(i => i.style.outline = 'none');
+    document.getElementById(`p6-${srcId}`).style.outline = '3px solid #facc15';
+  }
+
+  function matchItem(targetId) {
+    const feedback = document.getElementById('p6-feedback');
+    if (!selectedSrc) {
+      feedback.style.color = '#facc15';
+      feedback.innerText = "Hãy chọn ô bên trái trước!";
+      return;
+    }
+
+    if (p6Step === 1 && selectedSrc === 'src1' && targetId === 'target1') {
+      document.getElementById('p6-target1').classList.add('matched');
+      document.getElementById('p6-target1').innerHTML = '✓ Danh sách lớp';
+      document.getElementById('p6-src1').style.display = 'none';
+      document.getElementById('p6-src2').style.display = 'flex';
+      feedback.style.color = '#4ade80';
+      feedback.innerText = "Chính xác! Tiếp tục nối Danh sách lớp học.";
+      p6Step = 2;
+      selectedSrc = null;
+    } else if (p6Step === 2 && selectedSrc === 'src2' && targetId === 'target2') {
+      document.getElementById('p6-target2').classList.add('matched');
+      document.getElementById('p6-target2').innerHTML = '✓ Điểm môn học';
+      document.getElementById('p6-src2').style.display = 'none';
+      document.getElementById('p6-src3').style.display = 'flex';
+      feedback.style.color = '#4ade80';
+      feedback.innerText = "Tuyệt vời! Bây giờ hãy nối Bảng điểm môn học.";
+      p6Step = 3;
+      selectedSrc = null;
+    } else if (p6Step === 3 && selectedSrc === 'src3' && targetId === 'target3') {
+      document.getElementById('p6-target3').classList.add('matched');
+      document.getElementById('p6-target3').innerHTML = '✓ Lập bảng điểm';
+      document.getElementById('p6-src3').classList.add('matched');
+      feedback.style.color = '#4ade80';
+      feedback.innerText = "Hoàn thành xuất sắc! 🎉";
+      document.getElementById('p6-next').style.display = 'block';
+    } else {
+      feedback.style.color = '#f43f5e';
+      feedback.innerText = "Chưa đúng rồi, hãy thử kết nối lại nhé!";
+      selectedSrc = null;
+      document.querySelectorAll('.drag-item').forEach(i => i.style.outline = 'none');
+    }
+  }
+
+  // --- Page 9 Role Logic ---
+  let currentRole = '';
+
+  function loginRole(role) {
+    currentRole = role;
+    document.getElementById('p9-action-panel').style.display = 'block';
+    document.getElementById('p9-feedback').innerText = '';
+    const title = document.getElementById('p9-role-title');
+    if (role === 'hocsinh') {
+      title.innerText = "Bạn đang đăng nhập với vai trò: HỌC SINH 👨‍🎓";
+    } else {
+      title.innerText = "Bạn đang đăng nhập với vai trò: GIÁO VIÊN 👩‍🏫";
+    }
+  }
+
+  function resetRole() {
+    currentRole = '';
+    document.getElementById('p9-action-panel').style.display = 'none';
+    document.getElementById('p9-feedback').innerText = '';
+  }
+
+  function tryEditGrade() {
+    const feedback = document.getElementById('p9-feedback');
+    if (currentRole === 'hocsinh') {
+      feedback.style.color = '#f43f5e';
+      feedback.innerText = "🚫 Bạn không có thẩm quyền sửa điểm!";
+    } else if (currentRole === 'giaovien') {
+      feedback.style.color = '#facc15';
+      feedback.innerText = "😜 AAAyooo bạn đâu phải là giáo viên đâu?? Quay lại đi!";
+    }
+  }
+
+  // --- Page 11 Confetti Effect ---
+  function startConfetti() {
+    if (typeof confetti === 'function') {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    }
+  }
+</script>
+
+</body>
+</html>
