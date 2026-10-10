@@ -29,7 +29,7 @@
       width: 100%;
       max-width: 450px;
       min-height: 90vh;
-      background: rgba(30, 41, 59, 0.95);
+      background: #1e293b;
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
       border: 1px solid #334155;
@@ -49,29 +49,14 @@
       width: 100%;
       text-align: center;
       position: relative;
-      z-index: 2;
     }
 
     .page.active {
       display: flex;
     }
 
-    /* Background images overlay */
-    .bg-img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.25;
-      z-index: 1;
-      pointer-events: none;
-    }
-
     .content-box {
       width: 100%;
-      z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -92,7 +77,7 @@
     }
 
     .message-box {
-      background: rgba(15, 23, 42, 0.85);
+      background: #0f172a;
       border: 2px solid #38bdf8;
       border-radius: 16px;
       padding: 16px;
@@ -163,7 +148,7 @@
 
     /* Page 2: Raw data style */
     .raw-data-card {
-      background: rgba(15, 23, 42, 0.9);
+      background: #0f172a;
       border: 1px solid #38bdf8;
       border-radius: 12px;
       padding: 12px;
@@ -223,7 +208,7 @@
     }
 
     .quiz-btn {
-      background: #1e293b;
+      background: #0f172a;
       border: 2px solid #334155;
       color: #f8fafc;
       padding: 12px 16px;
@@ -263,7 +248,7 @@
       font-weight: bold;
       text-align: center;
       border: 2px solid #475569;
-      background: #1e293b;
+      background: #0f172a;
       min-height: 50px;
       display: flex;
       align-items: center;
@@ -309,7 +294,6 @@
 
   <!-- PAGE 1 -->
   <div class="page active" id="page-1">
-    <img src="https://images2.imgbox.com/f9/57/O3C54Sg9_o.jpg" class="bg-img" alt="Dog background">
     <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
       <div class="message-box">
         <h2 style="color: #f43f5e; font-size: 1.4rem;">⚠️ WARNING ⚠️</h2>
@@ -321,7 +305,6 @@
 
   <!-- PAGE 2 -->
   <div class="page" id="page-2">
-    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
     <div class="content-box">
       <h2>BẢNG ĐIỂM DƯ THỪA DỮ LIỆU</h2>
       
@@ -364,7 +347,6 @@
 
   <!-- PAGE 3 -->
   <div class="page" id="page-3">
-    <img src="https://images2.imgbox.com/39/29/Jq0c6zX7_o.jpg" class="bg-img" alt="Thinking Cat background">
     <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
       <div class="message-box">
         <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng và nghe tiếp tục bài thuyết trình nha 🐾</p>
@@ -377,7 +359,6 @@
 
   <!-- PAGE 4 -->
   <div class="page" id="page-4">
-    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
     <div class="content-box">
       <h2>CÂU HỎI 1</h2>
       <div class="message-box">
@@ -394,7 +375,6 @@
 
   <!-- PAGE 5 -->
   <div class="page" id="page-5">
-    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
     <div class="content-box">
       <h2>CÂU HỎI 2</h2>
       <div class="message-box">
@@ -411,10 +391,9 @@
 
   <!-- PAGE 6 -->
   <div class="page" id="page-6">
-    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
     <div class="content-box">
       <h2>TƯƠNG TÁC KẾT NỐI</h2>
-      <p style="font-size: 0.85rem;">Bấm chọn ô bên TẢI rồi bấm ô tương ứng bên PHẢI:</p>
+      <p style="font-size: 0.85rem;">Bấm chọn ô bên TRÁI rồi bấm ô tương ứng bên PHẢI:</p>
       
       <div class="drag-container">
         <div class="drag-col">
@@ -436,7 +415,6 @@
 
   <!-- PAGE 7 -->
   <div class="page" id="page-7">
-    <img src="https://images2.imgbox.com/39/29/Jq0c6zX7_o.jpg" class="bg-img" alt="Thinking Cat background">
     <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
       <div class="message-box">
         <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng và nghe tiếp tục bài thuyết trình nha 🐾</p>
@@ -449,7 +427,6 @@
 
   <!-- PAGE 8 -->
   <div class="page" id="page-8">
-    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
     <div class="content-box">
       <h2>CÂU HỎI 3</h2>
       <div class="message-box">
@@ -466,7 +443,6 @@
 
   <!-- PAGE 9 -->
   <div class="page" id="page-9">
-    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
     <div class="content-box">
       <h2>PHÂN QUYỀN TRUY CẬP</h2>
       <p style="font-size: 0.9rem;">Vui lòng chọn vai trò để đăng nhập:</p>
@@ -495,7 +471,6 @@
 
   <!-- PAGE 10 -->
   <div class="page" id="page-10">
-    <img src="https://images2.imgbox.com/39/29/Jq0c6zX7_o.jpg" class="bg-img" alt="Thinking Cat background">
     <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
       <div class="message-box">
         <p style="font-size: 1.1rem; font-weight: bold; color: #38bdf8;">Hãy nhìn lên bảng nào bạn và trả lời các câu hỏi 🧠</p>
@@ -508,7 +483,6 @@
 
   <!-- PAGE 11 -->
   <div class="page" id="page-11">
-    <img src="https://images2.imgbox.com/ee/61/j0A0m4jK_o.jpg" class="bg-img" alt="Cat Earth background">
     <div class="content-box" style="margin-top: auto; margin-bottom: auto;">
       <h1 class="celebrate-title">🎉 HOÀN THÀNH 🎉</h1>
       <div class="message-box" style="border-color: #f43f5e; margin-top: 20px;">
